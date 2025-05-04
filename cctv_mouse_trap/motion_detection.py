@@ -2,6 +2,8 @@ import imutils
 import cv2
 import time
 import numpy as np
+
+import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 
 # =============================================================================
@@ -25,6 +27,26 @@ MOVEMENT_DETECTED_PERSISTENCE = 10
 # MQTT MESSAGE HANDLER
 # =============================================================================
 
+is_connected = False 
+
+def on_connect(client, userdata, flags, rc):
+ global is_connected 
+ if rc == 0:
+    print("Connected with result code "+str(rc))
+    is_connected = True 
+
+
+client = mqtt.Client(client_id="motion_detact_0X01", clean_session=True, userdata=None, protocol=mqtt.MQTTv311, transport="tcp")
+client.on_connect = on_connect
+client.username_pw_set(username="tuanna", password="Abc@13579")
+
+client.connect("mqtt.smartsolar.io.vn", 1883, 60)
+client.loop_start()
+
+while( not is_connected ):
+    print("Waiting for MQTT connection ...")
+    time.sleep(1) 
+
 last_sent_time = 0 
 def send_event_message():
     global last_sent_time
@@ -34,13 +56,9 @@ def send_event_message():
         # time.sleep(5 - (current_time - last_sent_time))
         return
     # Send the MQTT message
-    publish.single(
+    client.publish(
         topic="anhtuan/mousetrap/event",
-        payload="1",
-        hostname="mqtt.smartsolar.io.vn",
-        port=1883,
-        auth={'username': "tuanna", 'password': "Abc@13579"},
-        client_id="motion_detector_0x01"
+        payload="1"
     )
     print("Motion_Detected event message have been sent to Mqtt broker")
     # Update the timestamp for the last sent message
