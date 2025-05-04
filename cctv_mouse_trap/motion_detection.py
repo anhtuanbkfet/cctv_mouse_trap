@@ -31,15 +31,18 @@ def send_event_message():
     current_time = time.time()
     # If the time difference is less than 5 seconds, wait accordingly
     if current_time - last_sent_time < 5:
-        time.sleep(5 - (current_time - last_sent_time))
+        # time.sleep(5 - (current_time - last_sent_time))
+        return
     # Send the MQTT message
     publish.single(
-        "anhtuan/mousetrap/event",
-        "1",
+        topic="anhtuan/mousetrap/event",
+        payload="1",
         hostname="mqtt.smartsolar.io.vn",
         port=1883,
-        auth={'username': "tuanna", 'password': "Abc@13579"}
+        auth={'username': "tuanna", 'password': "Abc@13579"},
+        client_id="motion_detector_0x01"
     )
+    print("Motion_Detected event message have been sent to Mqtt broker")
     # Update the timestamp for the last sent message
     last_sent_time = time.time()
 
