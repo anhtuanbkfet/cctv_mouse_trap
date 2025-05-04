@@ -23,6 +23,8 @@ MIN_SIZE_FOR_MOVEMENT = 500
 MOVEMENT_DETECTED_PERSISTENCE = 10
 
 
+SHOW_FRAMES = False
+
 # =============================================================================
 # MQTT MESSAGE HANDLER
 # =============================================================================
@@ -158,19 +160,20 @@ while True:
     else:
         text = "No Movement Detected"
 
-    # Print the text on the screen, and display the raw and processed video 
-    # feeds
-    cv2.putText(frame, str(text), (10,35), font, 0.75, (255,255,255), 2, cv2.LINE_AA)
-    
-    # For if you want to show the individual video frames
-#    cv2.imshow("frame", frame)
-#    cv2.imshow("delta", frame_delta)
-    
-    # Convert the frame_delta to color for splicing
-    frame_delta = cv2.cvtColor(frame_delta, cv2.COLOR_GRAY2BGR)
+    if SHOW_FRAMES:
+        # Print the text on the screen, and display the raw and processed video 
+        # feeds
+        cv2.putText(frame, str(text), (10,35), font, 0.75, (255,255,255), 2, cv2.LINE_AA)
+        
+        # For if you want to show the individual video frames
+        # cv2.imshow("frame", frame)
+        # cv2.imshow("delta", frame_delta)
+        
+        # Convert the frame_delta to color for splicing
+        frame_delta = cv2.cvtColor(frame_delta, cv2.COLOR_GRAY2BGR)
 
-    # Splice the two video frames together to make one long horizontal one
-    cv2.imshow("frame", np.hstack((frame_delta, frame)))
+        # Splice the two video frames together to make one long horizontal one
+        cv2.imshow("frame", np.hstack((frame_delta, frame)))
 
 
     # Interrupt trigger by pressing q to quit the open CV program
